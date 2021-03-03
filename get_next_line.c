@@ -6,10 +6,18 @@
 int	get_next_line(int fd, char **line)
 {
 	char	buf[10 + 1];
+	int		byte_read;
 
-	read(fd, buf, 10);
-	// buf[10] = '\0';
-	*line = ft_strdup(buf);
+	*line = ft_memset(*line, '\0', 1);
+	while ((byte_read = read(fd, buf, 10)))
+	{
+		// if (ft_strchr(buf, '\n'))
+		// {
+		// 	break;
+		// }
+		buf[byte_read] = '\0';
+		*line = ft_strjoin(*line, buf);
+	}
 	return (0);
 }
 
