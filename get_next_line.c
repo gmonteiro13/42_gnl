@@ -5,46 +5,70 @@
 
 char			*check_re(char *re, char **line)
 {
+	char 	*n_p;
+	char	*re_init;
 
+	re_init = re;
+	n_p = NULL;
+	if (re_init)
+	{
+		if ((n_p = ft_strchr(re, '\n')))
+		{
+			*n_p = '\0';
+			*line = ft_strdup(re);
+			ft_strcpy(re_init, ++n_p);
+		}
+		else
+		{
+			*line = ft_strdup(re_init);
+			ft_strbzero(re_init);
+		}
+	}
+	else
+	{
+		*line = ft_strnew(1);
+	}
+	return (n_p);
 }
 
-int				get_next_line(int fd, char **line)
+int				get_line(int fd, char **line, char *re)
 {
-	char		buf[1000 + 1];
+	char		buf[BUFF_SIZE + 1];
 	int			byte_read;
-	char		*null_p;
-	int			flag;
+	char		*n_p;
 	static char	*re;
+	char		*tmp;
 
-	flag = 1;
-	if (re)
-		*line = ft_strdup(re);
-	else
-		*line = ft_memset(*line, '\0', 1);
-	while (flag && (byte_read = read(fd, buf, 1000)))
+	n_p = check_re(re, line);
+	while (!n_p && (byte_read = read(fd, buf, BUFF_SIZE)))
 	{
 		buf[byte_read] = '\0';
-		if ((null_p = ft_strchr(buf, '\n')))
+		if ((n_p = ft_strchr(buf, '\n')))
 		{
-			*null_p = '\0';
-			flag = 0;
-			*null_p++;
-			re = ft_strdup(null_p);
+			*n_p = '\0';
+			n_p++;
+			re = ft_strdup(n_p);
 		}
+		tmp = *line;
 		*line = ft_strjoin(*line, buf);
+		free(tmp);
 	}
-	return (0);
+	return (byte_read || ft_strlen(*line)) ? 1 : 0;
 }
 
-int	main(void)
+int				get_nextline(int fd, char **line)
 {
-	char	*line;
-	int		fd;
-
-	fd = open("text.txt", O_RDONLY);
-	get_next_line(fd, &line);
-	printf("%s\n", line);
-
-	get_next_line(fd, &line);
-	printf("%s\n", line);
+	
 }
+
+// int	main(void)
+// {
+// 	char	*line;
+// 	int		fd;
+
+// 	fd = open("text.txt", O_RDONLY);
+// 	get_next_line(fd, &line);
+// 	printf("%s\n", line);
+// 	get_next_line(fd, &line);
+// 	printf("%s\n", line);
+// }

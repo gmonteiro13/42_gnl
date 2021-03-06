@@ -32,6 +32,15 @@ void				*ft_memcpy(void *dest, const void *src, size_t n)
 	return (d);
 }
 
+void				ft_strbzero(char *s)
+{
+	if (s != NULL)
+	{
+		while (*s++)
+			*s = '\0';
+	}
+}
+
 size_t				ft_strlen(const char *str)
 {
 	size_t			i;
@@ -71,17 +80,20 @@ char				*ft_strjoin(char const *s1, char const *s2)
 	return (new_str);
 }
 
-void				*ft_memset(void *s, int c, size_t n)
+char				*ft_strnew(size_t size)
 {
-	size_t			i;
+	char *str;
 
-	i = 0;
-	while (n > i)
+	str = (char *)malloc(sizeof(char) * (size + 1));
+	if (str == NULL)
+		return (NULL);
+	while (size > 0)
 	{
-		((char *)s)[i] = c;
-		i++;
+		str[size] = '\0';
+		size--;
 	}
-	return (s);
+	str[0] = '\0';
+	return (str);
 }
 
 char				*ft_strchr(const char *s, int c)
@@ -102,4 +114,18 @@ char				*ft_strchr(const char *s, int c)
 		p++;
 	}
 	return (NULL);
+}
+
+char				ft_strcpy(char *dest, const char *src)
+{
+	int i;
+
+	i = 0;
+	while(src[i])
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	dest[i] = '\0';
+	return (*dest);
 }
