@@ -56,9 +56,35 @@ int				get_line(int fd, char **line, char *re)
 	return (byte_read || ft_strlen(*line)) ? 1 : 0;
 }
 
-int				get_nextline(int fd, char **line)
+int				get_next_line(int fd, char **line)
 {
-	
+	char 		buf[BUFF_SIZE + 1];
+	int 		byte_read;
+	char 		*n_p;
+	static char *re;
+	char 		*tmp;
+
+	if (fd < 0 || line == NULL || BUFF_SIZE <= 0)
+		return (-1);
+	n_p = check_re(re, line);
+	while ((n_p = ft_strchr(*re, '\n')) 
+			&& (byte_read = read(fd, buf, BUFF_SIZE)))
+	{
+		buf[byte_read] = 0;
+		if (tmp = (re == NULL))
+		{
+			while (byte_read)
+				ft_strdup(buf);
+		}
+		else
+			ft_strjoin(re, buf);
+		if (re != 0)
+			free(re);
+		re = tmp;
+	}
+	if (byte_read < 0)
+		return (-1);
+	return (byte_read || ft_strlen(*line)) ? 1 : 0;
 }
 
 // int	main(void)
