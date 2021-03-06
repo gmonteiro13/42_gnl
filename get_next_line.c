@@ -2,58 +2,26 @@
 #include <fcntl.h>
 #include "get_next_line.h"
 
-
-char			*check_re(char *re, char **line)
+static int				get_line(char **line, char **save, char *n_p)
 {
-	char 	*n_p;
-	char	*re_init;
+	char *tmp;
 
-	re_init = re;
-	n_p = NULL;
-	if (re_init)
+	if (n_p != NULL)
 	{
-		if ((n_p = ft_strchr(re, '\n')))
-		{
-			*n_p = '\0';
-			*line = ft_strdup(re);
-			ft_strcpy(re_init, ++n_p);
-		}
-		else
-		{
-			*line = ft_strdup(re_init);
-			ft_strbzero(re_init);
-		}
+		*line = ft_strdup(*save);
+		tmp = ft_strdup(n_p + 1);
+		free(*save);
+		*save = tmp;
+		return (1);
+	}
+	if (*save != NULL)
+	{
+		*line = *save;
+		*save = NULL;
 	}
 	else
-	{
-		*line = ft_strnew(1);
-	}
-	return (n_p);
-}
-
-int				get_line(int fd, char **line, char *re)
-{
-	char		buf[BUFF_SIZE + 1];
-	int			byte_read;
-	char		*n_p;
-	static char	*re;
-	char		*tmp;
-
-	n_p = check_re(re, line);
-	while (!n_p && (byte_read = read(fd, buf, BUFF_SIZE)))
-	{
-		buf[byte_read] = '\0';
-		if ((n_p = ft_strchr(buf, '\n')))
-		{
-			*n_p = '\0';
-			n_p++;
-			re = ft_strdup(n_p);
-		}
-		tmp = *line;
-		*line = ft_strjoin(*line, buf);
-		free(tmp);
-	}
-	return (byte_read || ft_strlen(*line)) ? 1 : 0;
+		*line = ft_strdup("");
+	return (0);
 }
 
 int				get_next_line(int fd, char **line)
@@ -61,30 +29,31 @@ int				get_next_line(int fd, char **line)
 	char 		buf[BUFF_SIZE + 1];
 	int 		byte_read;
 	char 		*n_p;
-	static char *re;
+	static char *re[1000];
 	char 		*tmp;
 
-	if (fd < 0 || line == NULL || BUFF_SIZE <= 0)
+	if ((fd < 0)
+			|| (line == 0) || (BUFF_SIZE <= 0)
+			|| (read(fd, buf, 0) < 0)
+			|| !(*line = ft_strdup("")))
 		return (-1);
-	n_p = check_re(re, line);
-	while ((n_p = ft_strchr(*re, '\n')) 
-			&& (byte_read = read(fd, buf, BUFF_SIZE)))
+	n_p = ft_strchr(re[fd], '\n');
+	byte_read = read(fd, buf, BUFF_SIZE);
+	while ((n_p == 0) && (byte_read > 0))
 	{
 		buf[byte_read] = 0;
-		if (tmp = (re == NULL))
-		{
-			while (byte_read)
-				ft_strdup(buf);
-		}
+		tmp = re[fd];
+		if (tmp == NULL)
+			ft_strdup(buf);
 		else
-			ft_strjoin(re, buf);
+			ft_strjoin(re[fd], buf);
 		if (re != 0)
-			free(re);
-		re = tmp;
+			free(re[fd]);
+		re[fd] = tmp;
 	}
 	if (byte_read < 0)
 		return (-1);
-	return (byte_read || ft_strlen(*line)) ? 1 : 0;
+	return (get_line(line, &re[fd], n_p));
 }
 
 // int	main(void)
