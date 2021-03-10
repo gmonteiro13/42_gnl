@@ -74,7 +74,7 @@ char				*strjoin(char *s1, char *s2)
 	j = 0;
 	while (s2[j])
 		result[i++] = s2[j++];
-	free(re);
+	free(s1);
 	result[i] = '\0';
 	return (result);
 }
