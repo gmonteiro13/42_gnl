@@ -5,7 +5,7 @@
 char *file_rd(int fd, char *re, char *buf)
 {
 	int size;
-
+	
 	while ((size = read(fd, buf, BUFFER_SIZE)) > 0)
 	{
 		buf[size] = '\0';
@@ -61,12 +61,12 @@ int get_next_line(int fd, char **line)
 	return (get_line(line, &re[fd], n_p));
 }
 
-int	main(void)
-{
-	char	*line;
-	int		fd;
+// int	main(void)
+// {
+// 	char	*line;
+// 	int		fd;
 
-	fd = open("text.txt", O_RDONLY);
-	get_next_line(fd, &line);
-	printf("%s\n", line);
-}
+// 	fd = open("text.txt", O_RDONLY);
+// 	get_next_line(fd, &line);
+// 	printf("%s\n", line);
+// }
