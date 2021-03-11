@@ -7,8 +7,8 @@ char			*file_rd(int fd, char *re, char *buf)
 	while ((size = read(fd, buf, BUFFER_SIZE)) > 0)
 	{
 		buf[size] = '\0';
-		re = strjoin(re, buf);
-		if (ft_strchr_nl(re))
+		re = ft_strjoin(re, buf);
+		if (ft_find_nl(re))
 			return (re);
 	}
 	return (re);
@@ -57,6 +57,6 @@ int				get_next_line(int fd, char **line)
 		free(*line);
 		*line = NULL;
 	}
-	n_p = ft_strchr_nl(re[fd]);
+	n_p = ft_find_nl(re[fd]);
 	return (get_line(line, &re[fd], n_p));
 }
